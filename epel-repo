@@ -1,0 +1,9 @@
+Install epel package
+# dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y
+
+Verify
+# dnf repolist epel
+# dnf repolist epel -v
+
+List all available packages from epel repository
+# dnf repository-packages epel list | grep ansible
