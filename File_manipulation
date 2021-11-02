@@ -1,0 +1,33 @@
+File creation
+$ ansible -i inv localhost -m file -a "name=testfile state=touch"
+
+Running as root
+$ ansible -i inv localhost -b -m file -a "name=/root/testfile state=touch"
+
+Delete the file
+$ ansible -i inv centos7 -b -m file -a "name=/tmp/testfile state=absent"
+
+Copy file
+$ ansible -i inv centos7 -m copy -a "src=testfile dest=/tmp/newfile"
+
+Lineinfile add line
+$ ansible -i inv centos7 -m lineinfile -a "path=/home/ansible/testfile line='I am the Mali' state=present"
+
+Add line before line
+$ ansible localhost -m lineinfile -a "line='I am DevMaster' path=testfile insertbefore='Mali'"
+
+Get_url - download
+$ ansible localhost -m get_url -a "url=http://google.com dest=/home/ansible/google.html"
+$ ansible -i inv remote -m get_url -a "url=https://google.com dest=/home/ansible/google.html"
+
+File Archives
+$ ansible -i inv remote -m file -a "state=touch path=/home/ansible/test2"
+
+$ ansible -i inv remote -m lineinfile -a "line='test text for file 3' path=/home/ansible/test3"
+
+$ ansible -i inv remote -m lineinfile -a "line='test text for file 3' path=/home/ansible/file3 create=yes"
+
+$ ansible -i inv remote -m archive -a "path=/home/ansible format=zip dest=/tmp/files.zip"
+
+Unarchive
+$ ansible -i inv remote -m unarchive -a "remote_src=yes src=/tmp/files.zip dest=/tmp/"
