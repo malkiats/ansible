@@ -1,0 +1,57 @@
+Install ansible
+# yum install ansible -y
+or
+# dnf install ansible -y
+
+Install GIT 
+# yum install git -y
+
+Update /etc/hosts file
+
+Create ansible user on Master node
+# useradd ansible
+# passwd ansible
+
+Try SSH localhost from ansible user before login to localhost 
+$ ansible localhost -m ping -k
+SSH password:
+localhost | SUCCESS => {
+
+Create ansible user on nodes
+# useradd ansible
+# passwd ansible
+
+Add hosts
+# nano /etc/ansible/hosts
+localhost
+node1.mslab.net
+node2.mslab.net
+
+Sudo access to ansible
+# visudo
+ansible ALL=(ALL)       NOPASSWD: ALL
+
+SSH key less configuration - switch to ansible user
+# su - ansible
+# ssh-keygen
+# ssh-copy-id node2.mslab.net
+#  ssh-copy-id node1.mslab.net
+# ssh-copy-id localhost
+# ssh node2.mslab.net
+# ssh node1.mslab.net
+
+Ansible config list
+$ ansible-config list
+
+ Inventory list
+• Inventory location may be specified as follows:
+• Default: /etc/ansible/hosts
+• Specified by CLI: ansible -i <filename>
+• Can be set in ansible.cfg
+
+[webservers]
+httpd1.example.com
+httpd2.example.com
+
+[labservers]
+lab[01:99]
