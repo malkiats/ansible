@@ -1,0 +1,60 @@
+Ping localhost default inventory
+$ ansible localhost -m ping
+
+Ping centos group under inventory file
+$ ansible -i inv centos -m ping
+
+More information about host ansible facts
+$ ansible -i inv remote -m setup | less
+$ ansible -i inv remote -m setup -a "filter=*dist*"
+
+Install Package | -m Module | -a Argument | -b Become root
+ansible -i inv centos -b -m yum -a "name=elinks state=installed"
+
+Un-Install Package
+$ ansible -i inv centos7 -b -m yum -a "name=elinks state=absent" 
+
+
+Common modules
+
+• Module: ping
+Purpose: Verify Ansible connectivity between hosts.
+Arguments: None
+
+• Module: setup
+Purpose: Collect Ansible facts.
+Arguments: None
+
+• Module: yum
+Purpose: Install software with yum.
+Arguments: name=<PACKAGE_NAME> state=<STATE>
+
+• Module: service
+Purpose: Control service daemons.
+Arguments: name=<SERVICE_NAME> state=<STATE>
+
+• Module:copy
+Purpose: Copy a file to a particular location on a target host.
+Arguments: src=<SOURCE_PATH> dest=<ABSOLUTE_DESTINATION_PATH>
+
+
+For detailed modules
+https://docs.ansible.com/
+
+# man ansible-doc
+# ansible-doc -s copy
+
+The shell and command Modules
+
+Create file 
+$ ansible localhost -a "touch /tmp/test"
+
+$ ansible localhost -a "touch /tmp/test creates=/tmp/test"
+localhost | SUCCESS | rc=0 >>
+skipped, since /tmp/test exists
+
+Remove file
+$ ansible localhost -a "rm -f /tmp/test removes=/tmp/test"
+
+Execute shell
+$ ansible localhost -m shell -a "echo $PATH > /tmp/file"
