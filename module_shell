@@ -19,6 +19,9 @@
 Ping localhost default inventory
 $ ansible localhost -m ping
 
+Run the uptime command
+$ ansible web -m command -a "uptime"
+
 Ping centos group under inventory file
 $ ansible -i inv centos -m ping
 
