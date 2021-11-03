@@ -1,0 +1,5 @@
+Start and enable service
+$ ansible -i inv remote -b -m service -a "name=httpd state=started enable=yes"
+
+Stop and disabled
+$ ansible -i inv centos8 -b -m service -a "name=httpd state=stopped enabled=no"
