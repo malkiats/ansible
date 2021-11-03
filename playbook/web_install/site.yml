@@ -1,0 +1,26 @@
+---
+- name: install and start apache
+  hosts: webserver
+  remote_user: ansible
+  become: yes
+  
+  task:
+  - name: install epel repo
+    yum: name=epel-release state=present
+    
+  - name: install python bindings for SElinux
+    yum: name={{item}} state=present
+    with_items:
+    - libselinux-python
+    - libsemmanage-python
+    
+  - name: test to see if SElinux is running
+    command: getenforce
+    register: sestatus
+    changed_when: false
+    
+  - name: install apache
+    yum: name=httpd state= present
+    
+  - name: start apache
+    service: name=httpd state=started enabled=yes
