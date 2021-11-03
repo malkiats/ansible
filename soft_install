@@ -1,3 +1,5 @@
+## State=present / latest / absent ##
+
 Install ntpd on all servers
 $ ansible all -b -m package -a "name=ntpdate state=latest"
 
