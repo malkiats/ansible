@@ -1,3 +1,21 @@
+### Useful Module List ###
+# apt/yum
+# copy
+# file
+# get_url
+# git
+# ping
+# debug
+# service
+# synchronize
+# template
+# uri
+# user
+# wait_for
+# assert
+
+#########################################
+
 Ping localhost default inventory
 $ ansible localhost -m ping
 
