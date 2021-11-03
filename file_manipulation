@@ -31,3 +31,13 @@ $ ansible -i inv remote -m archive -a "path=/home/ansible format=zip dest=/tmp/f
 
 Unarchive
 $ ansible -i inv remote -m unarchive -a "remote_src=yes src=/tmp/files.zip dest=/tmp/"
+
+##### Place Key Files in the Correct Location, `/home/$USER/.ssh/authorized_keys`, on Hosts in `dbsystems`
+• ansible dbsystems -b -m file -a "path=/home/consultant/.ssh state=directory owner=consultant group=consultant mode=0755"
+• ansible dbsystems -b -m copy -a "src=/home/ansible/keys/consultant/authorized_keys dest=/home/consultant/.ssh/authorized_keys mode=0600 owner=consultant group=consultant"
+• ansible dbsystems -b -m file -a "path=/home/supervisor/.ssh state=directory owner=supervisor group=supervisor mode=0755"
+• ansible dbsystems -b -m copy -a "src=/home/ansible/keys/supervisor/authorized_keys dest=/home/supervisor/.ssh/authorized_keys mode=0600 owner=supervisor group=supervisor"
+
+
+Ensure `auditd` Is Enabled and Running on All Hosts
+ansible all -b -m service -a "name=auditd state=started enabled=yes"
