@@ -1,0 +1,14 @@
+Create user
+ansible -i inv remote -b -m user -a "name=test1"
+
+Remove user
+ansible -i inv remote -b -m user -a "name=test1 state=absent remove=yes"
+
+Adding Group
+$ ansible -i inv remote -b -m group -a "name=tech"
+
+Add user to group
+$ ansible -i inv remote -b -m user -a "name=test1 group=tech"
+
+Remove group
+$ ansible -i inv remote -b -m group -a "name=tech state=absent"
