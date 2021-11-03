@@ -1,0 +1,9 @@
+Install ntpd on all servers
+$ ansible all -b -m package -a "name=ntpdate state=latest"
+
+On Ubuntu
+$ ansible -i inv ubuntu -b -m apt -a "name=apache2 state=latest"
+
+Remove package
+$ ansible all -b -m package -a "name=httpd state=absent"
+$ ansible -i inv ubuntu -b -m apt -a "name=apache2 state=absent"
