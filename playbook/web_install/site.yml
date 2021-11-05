@@ -4,7 +4,7 @@
   remote_user: ansible
   become: yes
   
-  task:
+  tasks:
   - name: install epel repo
     yum: name=epel-release state=present
     
@@ -20,7 +20,7 @@
     changed_when: false
     
   - name: install apache
-    yum: name=httpd state= present
+    yum: name=httpd state=present
     
   - name: start apache
     service: name=httpd state=started enabled=yes
