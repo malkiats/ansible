@@ -1,3 +1,5 @@
+# Copy / Install / User / Fileinline
+
 All servers: 
 Edit /etc/hosts to include the following entry: 
 - ansible.xyzcorp.com 169.168.0.1 
