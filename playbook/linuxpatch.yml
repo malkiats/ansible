@@ -1,0 +1,50 @@
+---
+- hosts: centos
+  become: yes
+  serial: 2
+
+  tasks:
+    # Check the application status
+    - name: verify application process
+      shell: if ps -eaf | egrep 'apache|http'|grep -v grep > /dev/null ;then echo 'process_running' ; else echo 'process_not_running';fi
+      ignore_errors: true
+      register: app_process_check
+
+
+    - name: decision point to start patching
+      fail: msg="{{ inventory_hostname }} have running application. Please stop the application first, then attempt patching."
+      when: app_process_check.stdout == "process_running"
+
+    - name: upgrade all packages
+      yum:
+        name="*"
+        state=latest
+      when: app_process_check.stdout == "process_not_running" and ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+      register: yum_update
+
+      - name: check if kernel update happen
+        shell: KERNEL_NEW=$(rpm -q --last kernel |head -1 | awk '{print $1}' | sed 's/kernel-//'); KERNEL_NOW=$(uname -r); if [[ $KERNEL_NEW != $KERNEL_NOW ]]; then echo "reboot_needed"; else echo "reboot_not_needed"; fi
+        ignore_errors: true
+        register: reboot_required
+
+      - name: restart system
+        command: shutdown -r +1 "rebooting System After Patching"
+        async: 0
+        poll: 0
+        when: reboot_required.stdout == "reboot_needed"
+        register: reboot_started
+        ignore_errors: true
+
+      - name: Pause for 180 Sec
+        pause:
+          minutes: 3
+
+      - name: check if system responding
+        local_action:
+          module: wait_for
+            host={{ inventory_hostname }}
+            port=22
+            delay=15
+            timeout=300
+            state=started
+        when: reboot_started|changed
