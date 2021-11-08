@@ -17,5 +17,5 @@
     - name: httpd service
       service:
         name: httpd
-        state: latest
+        state: restarted
       listen: httpd service
