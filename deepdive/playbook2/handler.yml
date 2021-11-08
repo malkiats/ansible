@@ -1,0 +1,21 @@
+---
+- hosts: centos
+  become: yes
+  vars:
+    httpd_log_level: error
+  tasks:
+    - name: install httpd
+      yum:
+        name: httpd
+        state: latest
+    - name: update conf
+      templeate:
+        src: /home/ansible/httpd.conf.j2
+        dest: /etc/httpd/conf/httpd.conf
+      notify: httpd service
+  handlers:
+    - name: httpd service
+      service:
+        name: httpd
+        state: latest
+      listen: httpd service
