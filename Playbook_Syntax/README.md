@@ -10,5 +10,7 @@ Working with Sensitive Data Using Ansible Vault
 
 # Run Tag
 ansible-playbook tags.yml --tags software 
+
 ansible-playbook tags.yml --skip-tags software
+
 ansible-playbook -t software,files
