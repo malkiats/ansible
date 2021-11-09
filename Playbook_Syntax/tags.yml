@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  tasks:
+    - name: install elinks
+      becomes: yes
+      yum:
+        name: elinks
+        status: latest
+      tags:
+        - software
+    - name: Add line
+      lineinfile:
+        path: /home/ansible/tag-test.txt
+        create: yes
+        line: "Tag called"
+      tags:
+        - files
+        - config
