@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: install software
+      yum:
+        name: broke
+        state: latest
+      ignore_errors: yes     # This will ignore the first task if it's failed and countinue to next task
+    - name: Run utility
+      command: /home/ansible/do-stuff.sh
+      register: cmd_output
+      changed_when: "'CHANGED' in cmd output.stdout"
+      failed_when: "'FAIL' in cmd output.stdout"
+      
+      #####################################################
+      
+      # cat do-stuff.sh
+      #!/bin/sh
+      if [ -z $1 ]
+      then
+        echo "I CHANGED SOMETHING"
+      else
+        echo "I FAILED"
+      fi
