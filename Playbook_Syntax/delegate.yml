@@ -1,0 +1,13 @@
+---
+- hosts: centos
+  tasks:
+    - name: Run sleep.sh
+      command: /home/ansible/sleep.sh
+      async: 60
+      poll: 0
+      delegate_to: server2
+    - name: install mariadb
+      package:
+        name: mariadb
+        state: latest
+      become: yes
