@@ -1,0 +1,40 @@
+Encrypt
+$ ansible-vault unencrypt testfile
+
+Decrypt
+$ ansible-vault decrypt testfile
+
+View
+$ ansible-vault view testfile
+
+Edit
+$ ansible-vault edit testfile
+
+Change password
+$ ansible-vault rekey testfile
+
+Encypt with label
+ansible-vault encrypt --vault-id prod@prompt testfile
+
+#############################################################
+
+# nano secret.yml
+---
+- hosts: localhost
+  vars_files:
+    /home/ansible/vault
+  tasks:
+    - name: add secret text to open.txt
+      lineinfile:
+        path: /home/ansible/open.txt
+        create: yes
+        line: "{{ password }}"
+      no_log: true
+
+
+  # cat vault
+  passowrd: coleslaw  
+
+
+Run
+# ansible-playbook secret.yml --vault-id prod@prompt
