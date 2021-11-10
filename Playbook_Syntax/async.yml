@@ -1,0 +1,7 @@
+---
+- hosts
+  tasks:
+    - name: Run sleep.sh
+      command: /home/ansible/sleep.sh
+      async: 60   # Job will terminate after 60 seconds - timeout value
+      poll: 10    # check on job every 10 second
