@@ -1,4 +1,5 @@
 Install ansible
+# yum install epel-release   
 # yum install ansible -y
 or
 # dnf install ansible -y
