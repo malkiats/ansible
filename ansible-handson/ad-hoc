@@ -1,0 +1,40 @@
+[Ping] - "-m" is for Module
+```bash
+$ ansible -i host.ini servers -m ping
+```
+
+[Uptime] - "-a" is for ad-hoc commands
+```bash
+$ ansible -i host.ini servers -a "uptime"
+```
+
+[Prompt for the sudo password] "-k" or "--ask-become-pass"
+```bash
+$ ansible -i host.ini servers -a "apt update -y" --become -K
+```
+
+Option 2: Configure passwordless sudo (common in labs)
+On each target server:
+```bash
+sudo visudo
+```
+Add:
+```bash
+devops ALL=(ALL) NOPASSWD:ALL
+```
+Then your original command will work:
+```bash
+ansible -i host.ini servers -a "apt update -y" --become
+```
+
+=======================================
+
+[Running Playbook]
+```bash
+$ ansible-playbook -i ../host.ini hello.yml -K -v
+```
+
+[All Setup Info from Machine]
+```bash
+$ ansible -i ../host.ini servers -m setup
+```

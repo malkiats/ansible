@@ -1,0 +1,24 @@
+- name: Hello
+  hosts: servers
+  become: yes
+
+  vars:
+    greeting: "Hello devops"
+    package_name: 
+      - tree
+      - zip
+      - unzip
+      - wget
+      - apt-utils
+
+  tasks:
+    - name: Greet user
+      command: echo "{{ greeting }}"
+
+    - name: Install Package
+      package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ package_name }}"
+      debug:
+        msg: "Installed {{ item }}"
