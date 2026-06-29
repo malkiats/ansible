@@ -1,0 +1,18 @@
+---
+- name: Install nginx
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Render nginx configuration
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/conf.d/application.conf
+    mode: "0644"
+  notify: Restart nginx
+
+- name: Ensure nginx service is enabled and running
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

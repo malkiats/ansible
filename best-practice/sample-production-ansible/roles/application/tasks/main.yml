@@ -1,0 +1,20 @@
+---
+- name: Ensure application group exists
+  ansible.builtin.group:
+    name: "{{ application_group }}"
+    state: present
+
+- name: Ensure application user exists
+  ansible.builtin.user:
+    name: "{{ application_user }}"
+    group: "{{ application_group }}"
+    system: true
+    state: present
+
+- name: Ensure application install directory exists
+  ansible.builtin.file:
+    path: "{{ application_install_dir }}"
+    state: directory
+    owner: "{{ application_user }}"
+    group: "{{ application_group }}"
+    mode: "0755"

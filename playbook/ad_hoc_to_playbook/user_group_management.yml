@@ -1,0 +1,28 @@
+---
+- name: Manage users and groups with playbooks
+  hosts: all
+  gather_facts: false
+  become: true
+  vars:
+    demo_group_name: tech
+    demo_user_name: test1
+    demo_user_state: present
+  tasks:
+    - name: Ensure group state
+      ansible.builtin.group:
+        name: "{{ demo_group_name }}"
+        state: present
+      when: demo_user_state == 'present'
+
+    - name: Ensure user state
+      ansible.builtin.user:
+        name: "{{ demo_user_name }}"
+        group: "{{ demo_group_name }}"
+        state: "{{ demo_user_state }}"
+        remove: "{{ demo_user_state == 'absent' }}"
+
+    - name: Remove group when user state is absent
+      ansible.builtin.group:
+        name: "{{ demo_group_name }}"
+        state: absent
+      when: demo_user_state == 'absent'

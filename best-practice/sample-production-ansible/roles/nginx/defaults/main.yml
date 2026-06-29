@@ -1,0 +1,4 @@
+---
+nginx_listen_port: 80
+nginx_server_name: localhost
+application_upstream_port: 8080

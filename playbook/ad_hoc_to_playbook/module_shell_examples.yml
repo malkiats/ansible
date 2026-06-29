@@ -1,0 +1,42 @@
+---
+- name: Demonstrate common module, command, and shell usage
+  hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    demo_package_name: elinks
+    demo_touch_file: /tmp/ansible-demo-file
+    demo_shell_output: /tmp/ansible-path.txt
+  tasks:
+    - name: Verify connectivity
+      ansible.builtin.ping:
+
+    - name: Show filtered distribution facts
+      ansible.builtin.debug:
+        msg:
+          - "Host: {{ inventory_hostname }}"
+          - "Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+    - name: Ensure demo package is installed
+      ansible.builtin.package:
+        name: "{{ demo_package_name }}"
+        state: present
+
+    - name: Run uptime via command module
+      ansible.builtin.command: uptime
+      register: uptime_result
+      changed_when: false
+
+    - name: Display uptime output
+      ansible.builtin.debug:
+        var: uptime_result.stdout
+
+    - name: Create a demo file with command module guard
+      ansible.builtin.command: "touch {{ demo_touch_file }}"
+      args:
+        creates: "{{ demo_touch_file }}"
+
+    - name: Write PATH to file with shell module
+      ansible.builtin.shell: "echo $PATH > {{ demo_shell_output }}"
+      args:
+        executable: /bin/bash

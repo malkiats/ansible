@@ -1,5 +1,24 @@
-Start and enable service
-$ ansible -i inv remote -b -m service -a "name=httpd state=started enable=yes"
+# Service Management Notes
 
-Stop and disabled
-$ ansible -i inv centos8 -b -m service -a "name=httpd state=stopped enabled=no"
+This file is a quick reference for starting, stopping, enabling, and disabling services with Ansible.
+
+## Start And Enable A Service
+
+```bash
+ansible -i inv remote -b -m service -a "name=httpd state=started enable=yes"
+```
+
+This example starts `httpd` and enables it at boot.
+
+## Stop And Disable A Service
+
+```bash
+ansible -i inv centos8 -b -m service -a "name=httpd state=stopped enabled=no"
+```
+
+This example stops `httpd` and prevents it from starting automatically on reboot.
+
+## Notes
+
+- Use `become` when the service action requires elevated privileges.
+- In playbooks, combine service tasks with handlers so restarts happen only when configuration changes.

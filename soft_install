@@ -1,11 +1,46 @@
-## State=present / latest / absent ##
+# Software Installation Notes
 
-Install ntpd on all servers
-$ ansible all -b -m package -a "name=ntpdate state=latest"
+This file contains quick examples for installing and removing packages with Ansible.
 
-On Ubuntu
-$ ansible -i inv ubuntu -b -m apt -a "name=apache2 state=latest"
+## Common Package States
 
-Remove package
-$ ansible all -b -m package -a "name=httpd state=absent"
-$ ansible -i inv ubuntu -b -m apt -a "name=apache2 state=absent"
+Typical package states include:
+
+- `present`
+- `latest`
+- `absent`
+
+## Install Or Update A Package
+
+Install the latest `ntpdate` package on all hosts:
+
+```bash
+ansible all -b -m package -a "name=ntpdate state=latest"
+```
+
+## Distribution-Specific Example
+
+On Ubuntu, install the latest Apache package:
+
+```bash
+ansible -i inv ubuntu -b -m apt -a "name=apache2 state=latest"
+```
+
+## Remove A Package
+
+Remove `httpd` from all hosts:
+
+```bash
+ansible all -b -m package -a "name=httpd state=absent"
+```
+
+Remove Apache on Ubuntu:
+
+```bash
+ansible -i inv ubuntu -b -m apt -a "name=apache2 state=absent"
+```
+
+## Notes
+
+- Prefer the generic `package` module when you want one task that works across multiple Linux families.
+- Use a platform-specific module such as `apt` when you need behavior specific to that package manager.

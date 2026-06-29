@@ -1,0 +1,15 @@
+---
+- name: Manage services with playbooks
+  hosts: all
+  gather_facts: false
+  become: true
+  vars:
+    managed_service_name: httpd
+    managed_service_state: started
+    managed_service_enabled: true
+  tasks:
+    - name: Manage service state
+      ansible.builtin.service:
+        name: "{{ managed_service_name }}"
+        state: "{{ managed_service_state }}"
+        enabled: "{{ managed_service_enabled }}"

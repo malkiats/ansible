@@ -1,70 +1,139 @@
-File creation
-$ ansible -i inv localhost -m file -a "name=testfile state=touch"
+# File And Content Management Notes
 
-Running as root
-$ ansible -i inv localhost -b -m file -a "name=/root/testfile state=touch"
+This file collects ad-hoc examples for file creation, copying, line editing, downloads, archives, and a few lab-style tasks.
 
-Delete the file
-$ ansible -i inv centos7 -b -m file -a "name=/tmp/testfile state=absent"
+## Basic File Operations
 
-Copy file
-$ ansible -i inv centos7 -m copy -a "src=testfile dest=/tmp/newfile"
+Create a file:
 
-Lineinfile add line
-$ ansible -i inv centos7 -m lineinfile -a "path=/home/ansible/testfile line='I am the Mali' state=present"
+```bash
+ansible -i inv localhost -m file -a "name=testfile state=touch"
+```
 
-Add line before line
-$ ansible localhost -m lineinfile -a "line='I am DevMaster' path=testfile insertbefore='Mali'"
+Create a file as root:
 
-Get_url - download
-$ ansible localhost -m get_url -a "url=http://google.com dest=/home/ansible/google.html"
-$ ansible -i inv remote -m get_url -a "url=https://google.com dest=/home/ansible/google.html"
+```bash
+ansible -i inv localhost -b -m file -a "name=/root/testfile state=touch"
+```
 
-File Archives
-$ ansible -i inv remote -m file -a "state=touch path=/home/ansible/test2"
+Delete a file:
 
-$ ansible -i inv remote -m lineinfile -a "line='test text for file 3' path=/home/ansible/test3"
+```bash
+ansible -i inv centos7 -b -m file -a "name=/tmp/testfile state=absent"
+```
 
-$ ansible -i inv remote -m lineinfile -a "line='test text for file 3' path=/home/ansible/file3 create=yes"
+## Copy Files
 
-$ ansible -i inv remote -m archive -a "path=/home/ansible format=zip dest=/tmp/files.zip"
+```bash
+ansible -i inv centos7 -m copy -a "src=testfile dest=/tmp/newfile"
+```
 
-Unarchive
-$ ansible -i inv remote -m unarchive -a "remote_src=yes src=/tmp/files.zip dest=/tmp/"
+## Edit File Content With `lineinfile`
 
-##### Place Key Files in the Correct Location, `/home/$USER/.ssh/authorized_keys`, on Hosts in `dbsystems`
-• ansible dbsystems -b -m file -a "path=/home/consultant/.ssh state=directory owner=consultant group=consultant mode=0755"
-• ansible dbsystems -b -m copy -a "src=/home/ansible/keys/consultant/authorized_keys dest=/home/consultant/.ssh/authorized_keys mode=0600 owner=consultant group=consultant"
-• ansible dbsystems -b -m file -a "path=/home/supervisor/.ssh state=directory owner=supervisor group=supervisor mode=0755"
-• ansible dbsystems -b -m copy -a "src=/home/ansible/keys/supervisor/authorized_keys dest=/home/supervisor/.ssh/authorized_keys mode=0600 owner=supervisor group=supervisor"
+Add a line:
 
+```bash
+ansible -i inv centos7 -m lineinfile -a "path=/home/ansible/testfile line='I am the Mali' state=present"
+```
 
-Ensure `auditd` Is Enabled and Running on All Hosts
+Insert a line before matching content:
+
+```bash
+ansible localhost -m lineinfile -a "line='I am DevMaster' path=testfile insertbefore='Mali'"
+```
+
+## Download Files
+
+```bash
+ansible localhost -m get_url -a "url=http://google.com dest=/home/ansible/google.html"
+ansible -i inv remote -m get_url -a "url=https://google.com dest=/home/ansible/google.html"
+```
+
+## Archive And Unarchive Examples
+
+Prepare some files:
+
+```bash
+ansible -i inv remote -m file -a "state=touch path=/home/ansible/test2"
+ansible -i inv remote -m lineinfile -a "line='test text for file 3' path=/home/ansible/test3"
+ansible -i inv remote -m lineinfile -a "line='test text for file 3' path=/home/ansible/file3 create=yes"
+```
+
+Create an archive:
+
+```bash
+ansible -i inv remote -m archive -a "path=/home/ansible format=zip dest=/tmp/files.zip"
+```
+
+Extract an archive:
+
+```bash
+ansible -i inv remote -m unarchive -a "remote_src=yes src=/tmp/files.zip dest=/tmp/"
+```
+
+## Authorized Keys Lab Task
+
+Place SSH authorized key files in the correct user locations on hosts in `dbsystems`.
+
+```bash
+ansible dbsystems -b -m file -a "path=/home/consultant/.ssh state=directory owner=consultant group=consultant mode=0755"
+ansible dbsystems -b -m copy -a "src=/home/ansible/keys/consultant/authorized_keys dest=/home/consultant/.ssh/authorized_keys mode=0600 owner=consultant group=consultant"
+ansible dbsystems -b -m file -a "path=/home/supervisor/.ssh state=directory owner=supervisor group=supervisor mode=0755"
+ansible dbsystems -b -m copy -a "src=/home/ansible/keys/supervisor/authorized_keys dest=/home/supervisor/.ssh/authorized_keys mode=0600 owner=supervisor group=supervisor"
+```
+
+## Ensure `auditd` Is Enabled
+
+```bash
 ansible all -b -m service -a "name=auditd state=started enabled=yes"
+```
 
+## Enigma Lab Scenario
 
-Become 'ansible' user and then download http://software.xyzcorp.com/enigma.tgz to `/tmp` on each host in qa-servers and verify the sha256 checksum via http://software.xyzcorp.com/enigma-checksum.txt.
-Note: This URL only works correctly when accessed on the lab servers. The dmain name DNS entry is overridden in /etc/hosts on each lab server. If you attempt to access it from another system, you will reach a parked domain.
+This section is a multi-step lab exercise for `qa-servers`.
 
-On EACH of the hosts in 'qa-servers' inventory, become the 'ansible' user:
+### Step 1: Download With Checksum Validation
 
+Become the `ansible` user:
+
+```bash
 sudo su - ansible
-As the 'ansible' user (above), run the following commands on each host in the 'qa-servers':
+```
 
+Compute the checksum and download the archive:
+
+```bash
 CHECKSUM=$(curl http://software.xyzcorp.com/enigma-checksum.txt | cut -f1 -d' ')
 ansible qa-servers -m get_url -a "url=http://software.xyzcorp.com/enigma.tgz dest=/tmp/enigma.tgz checksum=sha256:$CHECKSUM"
-check_circle
-Extract `/tmp/enigma.tgz` to `/opt/` on all hosts in qa-servers.
-Run ansible qa-servers -b -m unarchive -a "src=/tmp/enigma.tgz dest=/opt/ remote_src=yes"
+```
 
-check_circle
-Update the line of text "DEPLOY_CODE" in `/opt/enigma/details.txt` to the "CODE_RED" on each server in qa-servers.
-Run ansible qa-servers -b -m lineinfile -a "regexp=DEPLOY_CODE line=CODE_RED path=/opt/enigma/details.txt"
+Note: this URL works correctly only in the original lab environment because hostname resolution is overridden there.
 
-check_circle
-Set the group ownership of the directory `/opt/enigma/secret/` and each file contained within the directory so that the group owner is `protected` for each host in qa-servers.
-Run ansible qa-servers -b -m file -a "recurse=yes state=directory path=/opt/enigma/secret group=protected"
+### Step 2: Extract The Archive
 
-check_circle
-Delete the file `/opt/enigma/tmp/deployment-passwords.txt` from all servers.
-Run ansible all -b -m file -a "state=absent path=/opt/enigma/tmp/deployment-passwords.txt"
+```bash
+ansible qa-servers -b -m unarchive -a "src=/tmp/enigma.tgz dest=/opt/ remote_src=yes"
+```
+
+### Step 3: Update Deployment Code
+
+```bash
+ansible qa-servers -b -m lineinfile -a "regexp=DEPLOY_CODE line=CODE_RED path=/opt/enigma/details.txt"
+```
+
+### Step 4: Update Group Ownership
+
+```bash
+ansible qa-servers -b -m file -a "recurse=yes state=directory path=/opt/enigma/secret group=protected"
+```
+
+### Step 5: Remove Sensitive Deployment File
+
+```bash
+ansible all -b -m file -a "state=absent path=/opt/enigma/tmp/deployment-passwords.txt"
+```
+
+## Notes
+
+- These are quick command examples and lab tasks, not a fully normalized playbook workflow.
+- For repeatable operations, convert these patterns into playbooks or roles.

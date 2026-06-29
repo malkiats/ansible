@@ -1,0 +1,79 @@
+---
+- name: Manage files, content, downloads, and archives
+  hosts: all
+  gather_facts: false
+  become: true
+  vars:
+    demo_file_path: /tmp/testfile
+    demo_copy_destination: /tmp/newfile
+    demo_line_file: /tmp/managed-lines.txt
+    demo_insert_before_text: I am the Mali
+    demo_insert_line: I am DevMaster
+    demo_get_url: https://example.com
+    demo_download_destination: /tmp/example.html
+    demo_archive_source: /tmp/ansible-archive-demo
+    demo_archive_destination: /tmp/files.zip
+    demo_unarchive_destination: /tmp/files-unarchived
+  tasks:
+    - name: Ensure demo file exists
+      ansible.builtin.file:
+        path: "{{ demo_file_path }}"
+        state: touch
+        mode: "0644"
+
+    - name: Copy demo file
+      ansible.builtin.copy:
+        src: "{{ demo_file_path }}"
+        dest: "{{ demo_copy_destination }}"
+        remote_src: true
+        mode: "0644"
+
+    - name: Add a managed line to a file
+      ansible.builtin.lineinfile:
+        path: "{{ demo_line_file }}"
+        line: "{{ demo_insert_before_text }}"
+        create: true
+        state: present
+
+    - name: Insert a line before matching content
+      ansible.builtin.lineinfile:
+        path: "{{ demo_line_file }}"
+        line: "{{ demo_insert_line }}"
+        insertbefore: "{{ demo_insert_before_text }}"
+        state: present
+
+    - name: Download a remote file
+      ansible.builtin.get_url:
+        url: "{{ demo_get_url }}"
+        dest: "{{ demo_download_destination }}"
+        mode: "0644"
+
+    - name: Ensure archive source directory exists
+      ansible.builtin.file:
+        path: "{{ demo_archive_source }}"
+        state: directory
+        mode: "0755"
+
+    - name: Create sample content for archive
+      ansible.builtin.copy:
+        dest: "{{ demo_archive_source }}/file3"
+        content: "test text for file 3\n"
+        mode: "0644"
+
+    - name: Create archive file
+      community.general.archive:
+        path: "{{ demo_archive_source }}"
+        format: zip
+        dest: "{{ demo_archive_destination }}"
+
+    - name: Ensure unarchive destination exists
+      ansible.builtin.file:
+        path: "{{ demo_unarchive_destination }}"
+        state: directory
+        mode: "0755"
+
+    - name: Extract archive
+      ansible.builtin.unarchive:
+        src: "{{ demo_archive_destination }}"
+        dest: "{{ demo_unarchive_destination }}"
+        remote_src: true

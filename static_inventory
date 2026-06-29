@@ -1,3 +1,10 @@
+# Static Inventory Example
+
+This file shows a simple INI-style static inventory with grouped hosts and shared variables.
+
+## Example Inventory
+
+```ini
 [control]
 control ansible_host=10.42.0.2
 
@@ -12,3 +19,15 @@ haproxy ansible_host=10.42.0.100
 [all:vars]
 ansible_user=vagrant
 ansible_ssh_private_key_file=~/.vagrant.d/insecure+private_key
+```
+
+## Why This Matters
+
+- host groups make targeting easier
+- shared variables reduce duplication
+- a static inventory is a simple starting point for labs and small environments
+
+## Notes
+
+- For larger environments, prefer separated inventory directories for `dev`, `staging`, and `prod`.
+- Do not store secrets in plain-text inventory files.

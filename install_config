@@ -1,58 +1,138 @@
-Install ansible
-# yum install epel-release   
-# yum install ansible -y
-or
-# dnf install ansible -y
+# Ansible Controller Setup Notes
 
-Install GIT 
-# yum install git -y
+This file is a quick reference for preparing an Ansible control node and building the first static inventory.
 
-Update /etc/hosts file
+## 1. Install Ansible
 
-Create ansible user on Master node
-# useradd ansible
-# passwd ansible
+On RHEL or CentOS style systems:
 
-Try SSH localhost from ansible user before login to localhost 
-$ ansible localhost -m ping -k
-SSH password:
-localhost | SUCCESS => {
+```bash
+yum install epel-release
+yum install ansible -y
+```
 
-Create ansible user on nodes
-# useradd ansible
-# passwd ansible
+Or with `dnf`:
 
-Add hosts
-# nano /etc/ansible/hosts
+```bash
+dnf install ansible -y
+```
+
+## 2. Install Git
+
+```bash
+yum install git -y
+```
+
+## 3. Prepare Hostname Resolution
+
+Update `/etc/hosts` if your lab or environment depends on static hostname mappings.
+
+## 4. Create The `ansible` User On The Control Node
+
+```bash
+useradd ansible
+passwd ansible
+```
+
+## 5. Validate Local Connectivity
+
+Before setting up all remote nodes, test that the Ansible user can run a basic module against localhost.
+
+```bash
+ansible localhost -m ping -k
+```
+
+Expected behavior is a successful ping response after entering the SSH password.
+
+## 6. Create The `ansible` User On Managed Nodes
+
+```bash
+useradd ansible
+passwd ansible
+```
+
+Create the same automation user on each managed host when you are using a shared lab account model.
+
+## 7. Build A Basic Inventory
+
+Edit the default inventory file:
+
+```bash
+nano /etc/ansible/hosts
+```
+
+Example entries:
+
+```ini
 localhost
 node1.mslab.net
 node2.mslab.net
+```
 
-Sudo access to ansible
-# visudo
-ansible ALL=(ALL)       NOPASSWD: ALL
+## 8. Grant Sudo Access
 
-SSH key less configuration - switch to ansible user
-# su - ansible
-# ssh-keygen
-# ssh-copy-id node2.mslab.net
-#  ssh-copy-id node1.mslab.net
-# ssh-copy-id localhost
-# ssh node2.mslab.net
-# ssh node1.mslab.net
+Allow the `ansible` user to escalate privileges without being prompted every time.
 
-Ansible config list
-$ ansible-config list
+```bash
+visudo
+```
 
- Inventory list
-• Inventory location may be specified as follows:
-• Default: /etc/ansible/hosts
-• Specified by CLI: ansible -i <filename>
-• Can be set in ansible.cfg
+Example rule:
 
+```text
+ansible ALL=(ALL) NOPASSWD: ALL
+```
+
+## 9. Configure SSH Key-Based Access
+
+Switch to the automation user and create an SSH key pair:
+
+```bash
+su - ansible
+ssh-keygen
+```
+
+Copy the public key to each managed host:
+
+```bash
+ssh-copy-id node2.mslab.net
+ssh-copy-id node1.mslab.net
+ssh-copy-id localhost
+```
+
+Verify access:
+
+```bash
+ssh node2.mslab.net
+ssh node1.mslab.net
+```
+
+## 10. Review Configuration Sources
+
+List available Ansible configuration settings:
+
+```bash
+ansible-config list
+```
+
+Inventory location can come from:
+
+- the default path: `/etc/ansible/hosts`
+- the CLI with `ansible -i <filename>`
+- an `ansible.cfg` file
+
+## 11. Inventory Examples
+
+```ini
 [webservers]
 httpd1.example.com
 httpd2.example.com
 
 [labservers]
 lab[01:99]
+```
+
+## Notes
+
+- This is a lab-oriented setup reference, not a hardened production build guide.
+- In shared environments, review SSH, sudo, and inventory standards before applying these steps unchanged.

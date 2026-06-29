@@ -1,0 +1,34 @@
+---
+- name: Enable and inspect the EPEL repository
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Install EPEL release package on Red Hat family systems
+      ansible.builtin.dnf:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        state: present
+        disable_gpg_check: true
+      when: ansible_os_family == 'RedHat'
+
+    - name: Check EPEL repository list
+      ansible.builtin.command: dnf repolist epel
+      register: epel_repolist
+      changed_when: false
+      when: ansible_os_family == 'RedHat'
+
+    - name: Show EPEL repository output
+      ansible.builtin.debug:
+        var: epel_repolist.stdout_lines
+      when: ansible_os_family == 'RedHat'
+
+    - name: List packages from EPEL repository
+      ansible.builtin.command: dnf repository-packages epel list
+      register: epel_packages
+      changed_when: false
+      when: ansible_os_family == 'RedHat'
+
+    - name: Show a sample of packages from EPEL
+      ansible.builtin.debug:
+        msg: "{{ epel_packages.stdout_lines[:10] | default([]) }}"
+      when: ansible_os_family == 'RedHat'

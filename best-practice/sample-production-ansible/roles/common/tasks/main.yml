@@ -1,0 +1,10 @@
+---
+- name: Install common packages
+  ansible.builtin.package:
+    name: "{{ common_packages }}"
+    state: present
+
+- name: Set timezone
+  ansible.builtin.timezone:
+    name: "{{ timezone_name }}"
+  when: timezone_name is defined

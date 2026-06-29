@@ -1,0 +1,27 @@
+---
+- name: Manage packages with playbooks
+  hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    common_package_name: ntpdate
+    redhat_remove_package: httpd
+    ubuntu_package_name: apache2
+  tasks:
+    - name: Ensure a common package is installed
+      ansible.builtin.package:
+        name: "{{ common_package_name }}"
+        state: latest
+
+    - name: Remove Apache on Red Hat family systems
+      ansible.builtin.package:
+        name: "{{ redhat_remove_package }}"
+        state: absent
+      when: ansible_os_family == 'RedHat'
+
+    - name: Manage Apache package on Debian family systems
+      ansible.builtin.apt:
+        name: "{{ ubuntu_package_name }}"
+        state: latest
+        update_cache: true
+      when: ansible_os_family == 'Debian'

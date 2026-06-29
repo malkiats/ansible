@@ -1,0 +1,8 @@
+---
+application_name: sample-app
+application_version: 1.0.0
+application_artifact_url: https://repo.example.com/sample-app-1.0.0.tar.gz
+application_user: sampleapp
+application_group: sampleapp
+application_install_dir: /opt/sample-app
+application_service_name: sample-app

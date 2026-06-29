@@ -1,9 +1,27 @@
-Install epel package
-# dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y
+# EPEL Repository Notes
 
-Verify
-# dnf repolist epel
-# dnf repolist epel -v
+This file is a short reference for enabling and verifying the Extra Packages for Enterprise Linux repository.
 
-List all available packages from epel repository
-# dnf repository-packages epel list | grep ansible
+## Install The EPEL Release Package
+
+```bash
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y
+```
+
+## Verify The Repository
+
+```bash
+dnf repolist epel
+dnf repolist epel -v
+```
+
+## List Packages From EPEL
+
+```bash
+dnf repository-packages epel list | grep ansible
+```
+
+## Notes
+
+- This example targets EPEL on Enterprise Linux style systems.
+- Review the EPEL version you need for your operating system before using the command unchanged.

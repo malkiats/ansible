@@ -1,14 +1,40 @@
-Create user
+# User And Group Management Notes
+
+This file contains quick ad-hoc examples for creating and removing users and groups.
+
+## Create A User
+
+```bash
 ansible -i inv remote -b -m user -a "name=test1"
+```
 
-Remove user
+## Remove A User
+
+```bash
 ansible -i inv remote -b -m user -a "name=test1 state=absent remove=yes"
+```
 
-Adding Group
-$ ansible -i inv remote -b -m group -a "name=tech"
+This removes the user and deletes the associated home directory content where supported.
 
-Add user to group
-$ ansible -i inv remote -b -m user -a "name=test1 group=tech"
+## Create A Group
 
-Remove group
-$ ansible -i inv remote -b -m group -a "name=tech state=absent"
+```bash
+ansible -i inv remote -b -m group -a "name=tech"
+```
+
+## Add A User To A Group
+
+```bash
+ansible -i inv remote -b -m user -a "name=test1 group=tech"
+```
+
+## Remove A Group
+
+```bash
+ansible -i inv remote -b -m group -a "name=tech state=absent"
+```
+
+## Notes
+
+- These commands are useful for quick administration tasks and lab practice.
+- In repeatable automation, user and group definitions should usually live in playbooks or dedicated roles.

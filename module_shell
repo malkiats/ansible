@@ -1,81 +1,137 @@
-### Useful Module List ###
-# apt/yum
-# copy
-# file
-# get_url
-# git
-# ping
-# debug
-# service
-# synchronize
-# template
-# uri
-# user
-# wait_for
-# assert
+# Ad-Hoc Modules, Command, and Shell Notes
 
-#########################################
+This file is a quick reference for common Ansible modules and simple ad-hoc command patterns.
 
-Ping localhost default inventory
-$ ansible localhost -m ping
+## Useful Modules
 
-Run the uptime command
-$ ansible web -m command -a "uptime"
+Commonly used modules include:
 
-Ping centos group under inventory file
-$ ansible -i inv centos -m ping
+- `apt`
+- `yum`
+- `copy`
+- `file`
+- `get_url`
+- `git`
+- `ping`
+- `debug`
+- `service`
+- `synchronize`
+- `template`
+- `uri`
+- `user`
+- `wait_for`
+- `assert`
 
-More information about host ansible facts
-$ ansible -i inv remote -m setup | less
-$ ansible -i inv remote -m setup -a "filter=*dist*"
+## Basic Connectivity And Facts
 
-Install Package | -m Module | -a Argument | -b Become root
+Ping localhost using the default inventory:
+
+```bash
+ansible localhost -m ping
+```
+
+Ping a group from a custom inventory file:
+
+```bash
+ansible -i inv centos -m ping
+```
+
+Gather all facts:
+
+```bash
+ansible -i inv remote -m setup | less
+```
+
+Filter facts:
+
+```bash
+ansible -i inv remote -m setup -a "filter=*dist*"
+```
+
+## Running Commands
+
+Run the `uptime` command on the `web` group:
+
+```bash
+ansible web -m command -a "uptime"
+```
+
+## Package Management Examples
+
+Install a package with privilege escalation:
+
+```bash
 ansible -i inv centos -b -m yum -a "name=elinks state=installed"
+```
 
-Un-Install Package
-$ ansible -i inv centos7 -b -m yum -a "name=elinks state=absent" 
+Remove a package:
 
+```bash
+ansible -i inv centos7 -b -m yum -a "name=elinks state=absent"
+```
 
-Common modules
+## Common Module Summary
 
-• Module: ping
-Purpose: Verify Ansible connectivity between hosts.
-Arguments: None
+### `ping`
 
-• Module: setup
-Purpose: Collect Ansible facts.
-Arguments: None
+Purpose: verify Ansible connectivity between hosts.
 
-• Module: yum
-Purpose: Install software with yum.
-Arguments: name=<PACKAGE_NAME> state=<STATE>
+### `setup`
 
-• Module: service
-Purpose: Control service daemons.
-Arguments: name=<SERVICE_NAME> state=<STATE>
+Purpose: collect Ansible facts.
 
-• Module:copy
-Purpose: Copy a file to a particular location on a target host.
-Arguments: src=<SOURCE_PATH> dest=<ABSOLUTE_DESTINATION_PATH>
+### `yum`
 
+Purpose: install or remove software using `yum`.
 
-For detailed modules
-https://docs.ansible.com/
+Arguments typically include `name=<PACKAGE_NAME>` and `state=<STATE>`.
 
-# man ansible-doc
-# ansible-doc -s copy
+### `service`
 
-The shell and command Modules
+Purpose: start, stop, enable, or disable system services.
 
-Create file 
-$ ansible localhost -a "touch /tmp/test"
+Arguments typically include `name=<SERVICE_NAME>` and `state=<STATE>`.
 
-$ ansible localhost -a "touch /tmp/test creates=/tmp/test"
-localhost | SUCCESS | rc=0 >>
-skipped, since /tmp/test exists
+### `copy`
 
-Remove file
-$ ansible localhost -a "rm -f /tmp/test removes=/tmp/test"
+Purpose: copy a file to a managed host.
 
-Execute shell
-$ ansible localhost -m shell -a "echo $PATH > /tmp/file"
+Arguments typically include `src=<SOURCE_PATH>` and `dest=<ABSOLUTE_DESTINATION_PATH>`.
+
+## More Documentation
+
+- `https://docs.ansible.com/`
+- `man ansible-doc`
+- `ansible-doc -s copy`
+
+## Shell And Command Module Examples
+
+Create a file:
+
+```bash
+ansible localhost -a "touch /tmp/test"
+```
+
+Create a file only if it does not already exist:
+
+```bash
+ansible localhost -a "touch /tmp/test creates=/tmp/test"
+```
+
+Remove a file only if it exists:
+
+```bash
+ansible localhost -a "rm -f /tmp/test removes=/tmp/test"
+```
+
+Run a shell command:
+
+```bash
+ansible localhost -m shell -a "echo $PATH > /tmp/file"
+```
+
+## Notes
+
+- Prefer dedicated modules over `shell` or `command` when possible.
+- Use `shell` only when shell features are required.
+- Ad-hoc commands are useful for learning and quick checks, but repeatable work should usually move into playbooks or roles.

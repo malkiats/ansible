@@ -1,0 +1,51 @@
+---
+- name: Bootstrap an Ansible control node
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  become: true
+  vars:
+    bootstrap_manage_hosts_entry: false
+    bootstrap_hosts_entry: "ansible-controller 127.0.0.1"
+    bootstrap_ansible_user: ansible
+    bootstrap_install_git: true
+    bootstrap_install_ansible: true
+  tasks:
+    - name: Install EPEL release on Red Hat family systems
+      ansible.builtin.package:
+        name: epel-release
+        state: present
+      when:
+        - bootstrap_install_ansible
+        - ansible_os_family == 'RedHat'
+
+    - name: Install Ansible
+      ansible.builtin.package:
+        name: ansible
+        state: present
+      when: bootstrap_install_ansible
+
+    - name: Install Git
+      ansible.builtin.package:
+        name: git
+        state: present
+      when: bootstrap_install_git
+
+    - name: Ensure automation user exists
+      ansible.builtin.user:
+        name: "{{ bootstrap_ansible_user }}"
+        state: present
+        create_home: true
+
+    - name: Optionally add a hosts file entry
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: "{{ bootstrap_hosts_entry }}"
+        state: present
+      when: bootstrap_manage_hosts_entry
+
+    - name: Show configuration reminder
+      ansible.builtin.debug:
+        msg:
+          - "Review sudoers, SSH key distribution, and inventory configuration manually after bootstrap."
+          - "Use ansible-config list to inspect final controller settings."
